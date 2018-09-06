@@ -1,6 +1,6 @@
 #!/usr/bin/groovy
 
-@Library('github.com/fabric8io/fabric8-pipeline-library@master')
+@Library('github.com/sthaha/fabric8-pipeline-library@nodejs')
 def canaryVersion = "1.0.${env.BUILD_NUMBER}"
 def utils = new io.fabric8.Utils()
 def stashName = "buildpod.${env.JOB_NAME}.${env.BUILD_NUMBER}".replace('-', '_').replace('/', '_')
@@ -13,7 +13,7 @@ mavenNode {
   if (utils.isCI()) {
 
     mavenCI{}
-    
+
   } else if (utils.isCD()) {
     /*
      * Try to load the script ".openshiftio/Jenkinsfile.setup.groovy".
@@ -28,7 +28,7 @@ mavenNode {
     } catch (Exception ex) {
       echo "Jenkinsfile.setup.groovy not found"
     }
-    
+
     echo 'NOTE: running pipelines for the first time will take longer as build and base docker images are pulled onto the node'
     container(name: 'maven') {
       stage('Build Release') {
@@ -60,7 +60,7 @@ if (utils.isCD()) {
         environment = 'Stage'
       }
     }
-    
+
     stage('Rollout to Run') {
       unstash stashName
       setupScript?.setupEnvironmentPre(envProd)
